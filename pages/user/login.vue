@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    用户
+    登录
   </div>
 </template>
 

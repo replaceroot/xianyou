@@ -22,10 +22,10 @@
         <div v-if="false">
           <nuxt-link to="/user/login">登录注册</nuxt-link>
         </div>
-        <div>
+        <div v-if="true">
           <el-dropdown>
             <span class="el-dropdown-link">
-              <img src="https://pic.cnblogs.com/avatar/997909/20190710092323.png" alt="">
+              <img src="http://157.122.54.189:9095/assets/images/avatar.jpg" alt="">
               replaceroot
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
