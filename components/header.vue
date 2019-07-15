@@ -19,20 +19,25 @@
 
       <!-- 右侧登录注册 -->
       <div>
-        <div v-if="false">
-          <nuxt-link to="/user/login">登录注册</nuxt-link>
+        <div v-if="!$store.state.user.userInfo.token">
+          <nuxt-link to="/user/login"><el-link type="primary">你好, 请登录</el-link></nuxt-link>
         </div>
-        <div v-if="true">
+        <div v-else>
           <el-dropdown>
             <span class="el-dropdown-link">
-              <img src="http://157.122.54.189:9095/assets/images/avatar.jpg" alt="">
-              replaceroot
-              <i class="el-icon-arrow-down el-icon--right"></i>
+              <img
+                :src="$axios.defaults.baseURL + $store.state.user.userInfo.user.defaultAvatar"
+                alt
+              />
+              {{this.$store.state.user.userInfo.user.username}}
+              <i
+                class="el-icon-arrow-down el-icon--right"
+              ></i>
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>个人中心</el-dropdown-item>
-              <el-dropdown-item>退出</el-dropdown-item>
-
+              <!-- 给通过native给elementUI组件绑定原生事件 -->
+              <el-dropdown-item @click.native="handleLogout">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
@@ -42,7 +47,14 @@
 </template>
 
 <script>
-export default {};
+export default {
+  methods: {
+    // 退出登录，清空本地用户数据
+    handleLogout(){
+      this.$store.commit('user/clearUserInfo');
+    }
+  }
+};
 </script>
 
 <style lang="less" scoped>
@@ -89,8 +101,8 @@ export default {};
   }
 }
 
-.el-dropdown-link{
-  img{
+.el-dropdown-link {
+  img {
     width: 36px;
     height: 36px;
     vertical-align: middle;
