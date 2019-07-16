@@ -28,6 +28,22 @@ export const mutations = {
 
 // 异步修改仓库的数据
 export const actions = {
+
+  // 发送手机验证码
+  sendCode(store, phoneNumber){
+    return this.$axios({
+      url: '/captchas',
+      method: 'POST',
+      data: {
+        tel: phoneNumber
+      }
+    }).then(res=>{
+      const {code} = res.data;
+      return code;
+    })
+  },
+
+  // 调用登录接口
   // login(store, data){
   login({commit}, data){
     return this.$axios({
@@ -43,5 +59,19 @@ export const actions = {
       // this.$router.push("/");
       
     });
+  },
+
+  // 调用注册接口
+  register({commit}, props){
+    return this.$axios({
+      url: '/accounts/register',
+      method: "POST",
+      data: props
+    }).then(res=>{
+      // 注册成功之后自动登录
+      // 保存到vuex
+      commit("setUserInfo", res.data);
+    })
   }
+  
 }
