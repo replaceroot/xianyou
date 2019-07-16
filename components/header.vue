@@ -20,7 +20,9 @@
       <!-- 右侧登录注册 -->
       <div>
         <div v-if="!$store.state.user.userInfo.token">
-          <nuxt-link to="/user/login"><el-link type="primary">你好, 请登录</el-link></nuxt-link>
+          <nuxt-link to="/user/login">
+            <el-link type="primary">你好, 请登录</el-link>
+          </nuxt-link>
         </div>
         <div v-else>
           <el-dropdown>
@@ -29,7 +31,7 @@
                 :src="$axios.defaults.baseURL + $store.state.user.userInfo.user.defaultAvatar"
                 alt
               />
-              {{this.$store.state.user.userInfo.user.username}}
+              {{this.$store.state.user.userInfo.user.nickname}}
               <i
                 class="el-icon-arrow-down el-icon--right"
               ></i>
@@ -50,8 +52,8 @@
 export default {
   methods: {
     // 退出登录，清空本地用户数据
-    handleLogout(){
-      this.$store.commit('user/clearUserInfo');
+    handleLogout() {
+      this.$store.commit("user/clearUserInfo");
     }
   }
 };
