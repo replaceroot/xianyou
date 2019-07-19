@@ -21,7 +21,7 @@
       <div>
         <div v-if="!$store.state.user.userInfo.token">
           <nuxt-link to="/user/login">
-            <el-link type="primary">你好, 请登录</el-link>
+            <span class="login_span" type="primary">你好, 请登录</span>
           </nuxt-link>
         </div>
         <div v-else>
@@ -62,6 +62,10 @@ export default {
 <style lang="less" scoped>
 .container {
   box-shadow: 0 2px 2px #ddd;
+  .login_span{
+    font-size: 14px;
+    color: #409eff;
+  }
 }
 .main {
   width: 1000px;
