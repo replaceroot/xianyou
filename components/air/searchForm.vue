@@ -218,10 +218,15 @@ export default {
                 })
             }
             // 把搜索记录保存到本地
-            const aris = JSON.parse(localStorage.getItem('airs') || `[]`);
+            const airs = JSON.parse(localStorage.getItem('airs') || `[]`);
             // 添加到数组的最前面
-            aris.unshift(this.form);
-            localStorage.setItem('airs', JSON.stringify(aris));
+            airs.unshift(this.form);
+            // 本地存储限制在5个之内
+            console.log(airs.length)
+            if(airs.length > 5){
+                airs.length = 5;
+            }
+            localStorage.setItem('airs', JSON.stringify(airs));
         }
     },
     mounted() {
