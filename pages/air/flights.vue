@@ -30,11 +30,10 @@
             :total="total"
           ></el-pagination>
         </el-row>
-
       </div>
 
       <!-- 侧边栏 -->
-        <FlightsAside></FlightsAside>
+      <FlightsAside></FlightsAside>
     </el-row>
   </section>
 </template>
@@ -48,12 +47,12 @@ import FlightsAside from "@/components/air/flightsAside.vue";
 export default {
   data() {
     return {
-      flightsData: { flights: [], info: {}, options: {}}, // 后台返回的所有数据
+      flightsData: { flights: [], info: {}, options: {} }, // 后台返回的所有数据
       // dataList: [],  // 当前页数的数据
       pageIndex: 1, // 当前页数
       pageSize: 5, // 当前页面的条数
       total: 0, // 总条数
-      cacheFlightsData: { flights: [], info: {}, options: {}},
+      cacheFlightsData: { flights: [], info: {}, options: {} }
     };
   },
   components: {
@@ -74,34 +73,45 @@ export default {
     }
   },
 
-  watch: {
-    // 监听路由的变化
-    $route(){
-      console.log(this.$route)
+/*   watch: {
+    // 监听路由的变化, 同一个页面之间的跳转不会重新加载组件
+    // 1. 可以通过监听$route的方法来实现
+    // 2.
+    $route() {
+      this.getData();
     }
+  }, */
+
+  beforeRouteUpdate(to, from, next){
+    next();
+    this.getData();
   },
 
   mounted() {
-    // 请求机票列表数据
-    this.$axios({
-      url: "airs",
-      method: "GET",
-      params: this.$route.query
-    }).then(res => {
-      // 大数据
-      this.flightsData = res.data;
-      
-      // 和上面的值是一样的，只不过一旦被赋值之后就不能被修改了
-      this.cacheFlightsData = {...res.data};
-      // console.log(this.cacheFlightsData,111);
-      // 总条数
-      this.total = res.data.total;
-      // 第一页的数据
-      // this.dataList = this.flightsData.flights.slice(0, this.pageSize);
-      //   console.log(this.dataList);
-    });
+    this.getData();
   },
   methods: {
+    getData() {
+      // 请求机票列表数据
+      this.$axios({
+        url: "airs",
+        method: "GET",
+        params: this.$route.query
+      }).then(res => {
+        // 大数据
+        this.flightsData = res.data;
+
+        // 和上面的值是一样的，只不过一旦被赋值之后就不能被修改了
+        this.cacheFlightsData = { ...res.data };
+        // console.log(this.cacheFlightsData,111);
+        // 总条数
+        this.total = res.data.total;
+        // 第一页的数据
+        // this.dataList = this.flightsData.flights.slice(0, this.pageSize);
+        //   console.log(this.dataList);
+      });
+    },
+
     // 条数的切换
     handleSizeChange(value) {
       this.pageSize = value;
@@ -113,8 +123,8 @@ export default {
     },
 
     // 传递给子组件, 用于修改dataList
-    changeDataList(arr){
-      this.flightsData.flights = arr
+    changeDataList(arr) {
+      this.flightsData.flights = arr;
     }
   }
 };
