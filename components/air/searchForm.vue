@@ -154,7 +154,7 @@ export default {
                     // this.form.destCode = newData[0].sort;
                     // 回调函数中的参数必须是一个数组
                     // 数组中每一项必须是一个对象，对象中必须包含value属性
-                    cb(newData);
+                    // cb(newData);
                 });
             })
         },
@@ -217,6 +217,11 @@ export default {
                     query: this.form
                 })
             }
+            // 把搜索记录保存到本地
+            const aris = JSON.parse(localStorage.getItem('airs') || `[]`);
+            // 添加到数组的最前面
+            aris.unshift(this.form);
+            localStorage.setItem('airs', JSON.stringify(aris));
         }
     },
     mounted() {
