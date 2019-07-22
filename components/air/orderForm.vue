@@ -217,6 +217,9 @@ export default {
         console.log(res.data)
         const {data} = res;
         this.infoData = data;
+
+
+        this.$emit('setInfoData', data)
       })
     }
 }
