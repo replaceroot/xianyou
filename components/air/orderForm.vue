@@ -8,12 +8,12 @@
                 :key="index">
                     <!-- 用户列表 -->
                     <el-form-item label="乘机人类型">
-                        <el-input placeholder="姓名" class="input-with-select">
+                        <el-input placeholder="姓名" class="input-with-select"
+                        v-model="users[index].username">
                             <el-select 
                             slot="prepend" 
                             value="1" 
-                            placeholder="请选择"
-                            v-model="item.username">
+                            placeholder="请选择">
                                 <el-option label="成人" value="1"></el-option>
                             </el-select>
                         </el-input>
@@ -21,12 +21,12 @@
 
                     <el-form-item label="证件类型">
                         <el-input 
-                        placeholder="证件号码"  class="input-with-select">
+                        placeholder="证件号码"  class="input-with-select"
+                        v-model="users[index].id">
                             <el-select 
                             slot="prepend" 
                             value="1"           
-                            placeholder="请选择"
-                            v-model="item.id">
+                            placeholder="请选择">
                                 <el-option label="身份证" value="1" :checked="true"></el-option>
                             </el-select>
                         </el-input>
@@ -42,9 +42,11 @@
         <div class="air-column">
             <h2>保险</h2>
             <div>
-                <div class="insurance-item">
+                <div class="insurance-item"
+                v-for="(item, index) in infoData.insurances"
+                :key="index">
                     <el-checkbox 
-                    label="航空意外险：￥30/份×1  最高赔付260万" 
+                    :label="`${item.type}：￥${item.price}/份×${item.id}  最高赔付${(item.compensation.indexOf('万') != -1 ? item.compensation : item.compensation+'元') } `" 
                     border>
                     </el-checkbox> 
                 </div>
@@ -79,22 +81,30 @@
 
 <script>
 export default {
+    // 如果要在teamplate模版中使用动态数据，就必须在data中进行声明
     data(){
       return {
-        users:  [{}],    // 用户列表
+        users:  [{
+          username: '',
+          id: '',
+        }],    // 用户列表
         insurances: [],   // 保险id集合
         contactName: "",    // 联系人
         contactPhone: "",   // 联系电话
         invoice: false,    // 是否需要发票
         seat_xid: "",   // 座位id
         air: "",    // 航班id
+        infoData: {
+          insurances: [],
+        },   // 后台接口返回回来的数据
       }
     },
   
     methods: {
         // 添加乘机人
         handleAddUsers(){
-          this.users.push({})
+          this.users.push({username: '',
+          id: '',})
         },
         
         // 移除乘机人
@@ -110,8 +120,23 @@ export default {
 
         // 提交订单
         handleSubmit(){
-            
+            console.log(this.users)
         }
+    },
+
+    mounted(){
+      const {id, seat_xid} = this.$route.query;
+      // 请求选中的机票的数据
+      this.$axios({
+        url: '/airs/' + id,
+        params: {
+          seat_xid,
+        }
+      }).then(res=>{
+        console.log(res.data)
+        const {data} = res;
+        this.infoData = data;
+      })
     }
 }
 </script>
