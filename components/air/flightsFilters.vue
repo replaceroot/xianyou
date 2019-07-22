@@ -67,7 +67,13 @@ export default {
         { type: "大", size: "L" },
         { type: "中", size: "M" },
         { type: "小", size: "S" }
-      ]
+      ],
+
+      // 过滤条件列表
+      filters: {
+        company: {value: "", key: "airline_name"},
+        airSize: {value: "", key: "plane_size"},
+      }
     };
   },
 
@@ -90,6 +96,22 @@ export default {
   }, */
 
   methods: {
+    // 统一执行过滤
+    handleFilters(){
+      const arr = this.data.flights.filter(v =>{
+        let pass = true;
+        // 循环过滤条件的数组,，注意Object.keys会返回一个数组，里面包含key
+        Object.keys(this.filters).forEach(item=>{
+          if(!this.filters[item].value) return;
+          if(this.filters[item].value !== v[this.filters[item].key]){
+            pass = false;
+          }
+        })
+        return pass;
+      })
+      return arr;
+    },
+
     // 选择机场时候触发
     handleAirport(value) {
       const arr = this.data.flights.filter(v => {
@@ -113,10 +135,16 @@ export default {
     // 选择航空公司时候触发
     handleCompany(value) {
       // console.log(this.data, 11111);
-      const arr = this.data.flights.filter(v => {
+/*       const arr = this.data.flights.filter(v => {
         // 遍历的每一项中的名字等于用户选择的值就返回到一个新的数组arr里面
         return v.airline_name === value;
-      });
+      }); */
+      
+      console.log(this.filters);
+      this.filters.company.value = value;
+      console.log(this.filters);
+      const arr = this.handleFilters();
+      
       // 只包含选中的航空公司的列表数组
       // 调用flights.vue组件传递过来的changeDataList方法,并把arr的值当作实参传递给父组件实现修改flightsData.flights的值
       this.$emit("changeDataList", arr);
@@ -124,9 +152,11 @@ export default {
 
     // 选择机型时候触发
     handleAirSize(value) {
-      const arr = this.data.flights.filter(v => {
+      /* const arr = this.data.flights.filter(v => {
         return v.plane_size === value;
-      });
+      }); */
+      this.filters.airSize.value = value;
+      const arr = this.handleFilters();
       this.$emit("changeDataList", arr);
     },
 
