@@ -133,7 +133,29 @@ export default {
 
         // 提交订单
         handleSubmit(){
-            
+          const data = {
+            users: this.users,
+            insurances: this.insurances,
+            contactName: this.contactName,
+            contactPhone: this.contactPhone,
+            invoice: this.invoice,
+            captcha: this.captcha,
+            seat_xid: this.$route.query.seat_xid,
+            air: this.$route.query.id
+          }
+          // 发送订单提交请求
+            this.$axios({
+              url: "/airorders",
+              method: "POST",
+              data,
+              // 添加授权的头信息
+              headers: {
+                // 不是通用的，只针对当前项目(基于JWT token标准)
+                Authorization: `Bearer ${this.$store.state.user.userInfo.token}` 
+              }
+            }).then(res=>{
+              this.$message.success('订单提交成功, 正在跳转...')
+            })
         },
       
       // 拼接保险数据
