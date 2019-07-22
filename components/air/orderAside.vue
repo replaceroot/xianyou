@@ -16,7 +16,7 @@
         </el-col>
         <el-col :span="5" class="flight-airport">
           <strong>{{data.arr_time}}</strong>
-          <span>浦东机场T2</span>
+          <span>{{data.dst_airport_name}}{{data.dst_airport_quay}}</span>
         </el-col>
       </el-row>
     </div>

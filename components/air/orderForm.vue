@@ -25,7 +25,7 @@
                         v-model="users[index].id">
                             <el-select 
                             slot="prepend" 
-                            value="1"           
+                            value="1"
                             placeholder="请选择">
                                 <el-option label="身份证" value="1" :checked="true"></el-option>
                             </el-select>
@@ -83,6 +83,7 @@
 </template>
 
 <script>
+import { setTimeout } from 'timers';
 export default {
     // 如果要在teamplate模版中使用动态数据，就必须在data中进行声明
     data(){
@@ -194,7 +195,14 @@ export default {
                 Authorization: `Bearer ${this.$store.state.user.userInfo.token}` 
               }
             }).then(res=>{
+              const {data} = res.data;
+              
+              
               this.$message.success('订单提交成功, 正在跳转...')
+              setTimeout(()=>{
+                // 跳转到付款页
+                this.$router.push('/air/pay?id=' + data.id)  
+              }, 1500)
             })
         },
       
