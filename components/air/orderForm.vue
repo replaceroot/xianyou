@@ -47,6 +47,7 @@
                 :key="index">
                     <el-checkbox 
                     :label="`${item.type}：￥${item.price}/份×${item.id}  最高赔付${(item.compensation.indexOf('万') != -1 ? item.compensation : item.compensation+'元') } `" 
+                    @change="handlelsurances(item)"
                     border>
                     </el-checkbox> 
                 </div>
@@ -58,11 +59,11 @@
             <div class="contact">
                 <el-form label-width="60px">
                     <el-form-item label="姓名">
-                        <el-input></el-input>
+                        <el-input v-model="contactName"></el-input>
                     </el-form-item>
 
                     <el-form-item label="手机">
-                        <el-input placeholder="请输入内容">
+                        <el-input placeholder="请输入内容" v-model="contactPhone">
                             <template slot="append">
                             <el-button @click="handleSendCaptcha">发送验证码</el-button>
                             </template>
@@ -70,7 +71,7 @@
                     </el-form-item>
 
                     <el-form-item label="验证码">
-                        <el-input></el-input>
+                        <el-input v-model="captcha"></el-input>
                     </el-form-item>
                 </el-form>   
                 <el-button type="warning" class="submit" @click="handleSubmit">提交订单</el-button>
@@ -93,6 +94,7 @@ export default {
         contactPhone: "",   // 联系电话
         invoice: false,    // 是否需要发票
         seat_xid: "",   // 座位id
+        captcha: "",  // 手机验证码
         air: "",    // 航班id
         infoData: {
           insurances: [],
@@ -115,12 +117,34 @@ export default {
         
         // 发送手机验证码
         handleSendCaptcha(){
+            if(!this.contactPhone){
+              this.$alert("请输入手机号码", '提示', {
+                type: "warning"
+              })
+              return;
+            }
             
+            this.$store.dispatch('user/sendCode', this.contactPhone).then(code=>{
+              this.$alert(`模拟验证码为:${code}`,'提示', {
+                type: 'success'
+              })
+            })
         },
 
         // 提交订单
         handleSubmit(){
-            console.log(this.users)
+            
+        },
+      
+      // 拼接保险数据
+        handlelsurances(item){
+          
+          if(this.insurances.indexOf(item.id) != -1){
+            this.insurances.splice(this.insurances.indexOf(item.id), 1);
+          }else {
+            this.insurances.push(item.id);
+          }
+          console.log(this.insurances)
         }
     },
 
