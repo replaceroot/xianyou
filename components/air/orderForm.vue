@@ -133,6 +133,7 @@ export default {
 
         // 提交订单
         handleSubmit(){
+          // 数据的凭借
           const data = {
             users: this.users,
             insurances: this.insurances,
@@ -143,6 +144,40 @@ export default {
             seat_xid: this.$route.query.seat_xid,
             air: this.$route.query.id
           }
+
+          // 自定义验证
+          const rules = {
+            users: {
+              value: this.users[0].username && this.users[0].id,
+              message: "乘机人不能为空!"
+            },
+            contactName: {
+              value: this.contactName,
+              message: "联系人不能为空!",
+            },
+            contactPhone: {
+              value: this.contactPhone,
+              message: "联系电话不能为空!",
+            },
+            captcha: {
+              value: this.captcha,
+              message: "手机验证码不能为空!"
+            }
+          }
+
+          let invalid = true;
+          // 循环验证表单数据,返回一个数组
+          Object.keys(rules).forEach(v=>{
+            // 值如果为空就不提交了
+            if(!invalid) return;
+
+            if(!rules[v].value){
+              invalid = false;
+              this.$message.warning(rules[v].message);
+            }
+          })
+          if(!invalid) return;
+
           // 发送订单提交请求
             this.$axios({
               url: "/airorders",
