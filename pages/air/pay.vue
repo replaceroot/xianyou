@@ -24,8 +24,40 @@
 </template>
 
 <script>
-import { setTimeout } from "timers";
+
+// 生成二维码的包
+var QRCode = require("qrcode");
 export default {
+  methods: {
+    //  该方法用来检测付款状态
+    isPay(data) {
+      // axios返回的是一个promise
+      return this.$axios({
+        url: "/airorders/checkpay",
+        method: "POST",
+        data: {
+          id: data.id, // 订单ID
+          nonce_str: data.price, //  支付接口返回的订单金额
+          out_trade_no: data.orderNo //    订单编号
+        },
+        // 添加授权的头信息
+        headers: {
+          // 不是通用的，只针对当前项目(基于JWT token标准)
+          Authorization: `Bearer ${this.$store.state.user.userInfo.token}`
+        }
+      }).then(res => {
+        const {statusTxt} = res.data
+
+        if(statusTxt === '支付完成'){
+          return true;
+        }else {
+          return false;
+        }
+        
+      });
+    }
+  },
+
   mounted() {
     const { id } = this.$route.query;
     // 定时器里面有一个队列机制，要等待前面的代码执行完毕之后才会执行定时器里面的代码
@@ -41,13 +73,22 @@ export default {
       }).then(res => {
         console.log(res.data);
         // 付款链接
-        const {code_url} = res.data.payInfo;
-        var QRCode = require("qrcode");
+        const { code_url } = res.data.payInfo;
+
         // 插件要求的canvas标签
         var canvas = document.getElementById("qrcode-stage");
 
         // 生成二维码到canvas
-        QRCode.toCanvas(canvas, code_url)
+        QRCode.toCanvas(canvas, code_url);
+
+        this.timer = setInterval(async() => {
+          // 调用付款状态的查询
+          const pay = await this.isPay(res.data);
+          if(pay){
+            clearInterval(this.timer);
+            return;
+          }
+        }, 2000);
       });
     }, 11);
   }
